@@ -71,7 +71,7 @@ jobs:
           version: ${{ matrix.php-version }}
 
   format:
-    runs-on: ubuntu-latest
+    runs-on: macos-latest
 
     steps:
       - name: Checkout code
