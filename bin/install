@@ -12,6 +12,12 @@ install_php() {
 
   try_to_update_php_build
 
+  if [ "${PHP_WITHOUT_PEAR:-no}" != "no" ]; then
+    PHP_BUILD_CONFIGURE_OPTS="$PHP_BUILD_CONFIGURE_OPTS --without-pear"
+  else
+    PHP_BUILD_CONFIGURE_OPTS="$PHP_BUILD_CONFIGURE_OPTS --with-pear"
+  fi
+
   mkdir -p "$install_path"
   PHP_BUILD_CONFIGURE_OPTS="$PHP_BUILD_CONFIGURE_OPTS" CXXFLAGS="${CXXFLAGS:-}" PHP_BUILD_TMPDIR="${PHP_BUILD_TMPDIR:-$ASDF_DOWNLOAD_PATH}" phpbuild_wrapped "$version" "$install_path"
 }
