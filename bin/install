@@ -12,6 +12,7 @@ install_php() {
 
   try_to_update_php_build
 
+  mkdir -p "$install_path"
   PHP_BUILD_CONFIGURE_OPTS="$PHP_BUILD_CONFIGURE_OPTS" CXXFLAGS="${CXXFLAGS:-}" PHP_BUILD_TMPDIR="${PHP_BUILD_TMPDIR:-$ASDF_DOWNLOAD_PATH}" phpbuild_wrapped "$version" "$install_path"
 }
 
@@ -51,4 +52,4 @@ case "$ASDF_INSTALL_VERSION" in
 esac
 
 install_php "$ASDF_INSTALL_TYPE" "$ASDF_INSTALL_VERSION" "$ASDF_INSTALL_PATH"
-install_composer "$ASDF_INSTALL_PATH"
+# install_composer "$ASDF_INSTALL_PATH"
