@@ -33,7 +33,7 @@ delete_on_exit() {
 }
 
 phpbuild_wrapped() {
-  "$ASDF_PHP_PLUGIN_DIR/lib/commands/command-phpbuild.bash" "$@"
+  "$ASDF_PHP_PLUGIN_DIR/lib/commands/command-php-build.bash" "$@"
 }
 
 install_icu4c() {
