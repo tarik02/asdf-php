@@ -10,10 +10,6 @@ source "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/../utils.sh"
 # php-build environment variables being overriden by asdf-php
 export PHP_BUILD_CACHE_PATH="${PHP_BUILD_CACHE_PATH:-$ASDF_PHP_CACHE_DIR/php-build}"
 
-if [ "$PHP_ORG_MIRROR" ]; then
-  export PHP_BUILD_MIRROR_URL="$PHP_ORG_MIRROR"
-fi
-
 if [[ "${ASDF_PHP_CONCURRENCY-}" =~ ^[0-9]+$ ]]; then
   export MAKE_OPTS="${MAKE_OPTS:-} -j$ASDF_PHP_CONCURRENCY"
   export PHP_MAKE_OPTS="${PHP_MAKE_OPTS:-} -j$ASDF_PHP_CONCURRENCY"
@@ -26,7 +22,7 @@ if ! [ -x "$phpbuild" ]; then
   printf "Binary for php-build not found\n"
 
   if ! [ "${ASDF_PHP_PHPBUILD-}" ]; then
-    printf "Are you sure it was installed? Try running \`asdf %s update-phpbuild\` to do a local update or install\n" "$(plugin_name)"
+    printf "Are you sure it was installed? Try running \`asdf %s update-php-build\` to do a local update or install\n" "$(plugin_name)"
   fi
 
   exit 1
