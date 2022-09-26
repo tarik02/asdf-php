@@ -51,7 +51,7 @@ install_icu4c() {
 
   {
     cd "$tmp_dir"
-    curl -Lo "icu4c.tgz" "$source_url"
+    curl -s -Lo "icu4c.tgz" "$source_url"
     tar zxf "icu4c.tgz"
     cd icu/source
     ./configure --prefix="$dest_dir"
