@@ -1,0 +1,84 @@
+name: Main workflow
+
+on:
+  pull_request:
+  push:
+  schedule:
+    - cron: 0 0 * * 5
+
+jobs:
+  plugin-test-docker:
+    strategy:
+      matrix:
+        container:
+          - ubuntu:latest
+        php-version:
+          - 5.6.40
+          - 7.0.33
+          - 7.1.33
+          - 7.2.34
+          - 7.3.33
+          - 7.4.30
+          - 8.0.23
+          - 8.1.10
+
+    env:
+      DEBIAN_FRONTEND: noninteractive
+
+    container:
+      image: ${{ matrix.container }}
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Install packages
+        run: apt-get update && apt-get install -y autoconf bison build-essential curl gettext git libgd-dev libcurl4-openssl-dev libedit-dev libicu-dev libjpeg-dev libmysqlclient-dev libonig-dev libpng-dev libpq-dev libreadline-dev libsqlite3-dev libssl-dev libxml2-dev libzip-dev openssl pkg-config re2c zlib1g-dev
+
+      - name: asdf_plugin_test
+        uses: asdf-vm/actions/plugin-test@v1
+        with:
+          command: php --version
+          version: ${{ matrix.php-version }}
+
+  plugin-test-vm:
+    strategy:
+      matrix:
+        os:
+          - macos-latest
+        php-version:
+          - 5.6.40
+          - 7.0.33
+          - 7.1.33
+          - 7.2.34
+          - 7.3.33
+          - 7.4.30
+          - 8.0.23
+          - 8.1.10
+
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - name: Install packages
+        run: brew install autoconf automake bison freetype gd gettext icu4c krb5 libedit libiconv libjpeg libpng libxml2 libzip openssl@1.1 pkg-config re2c zlib
+
+      - name: Install conflicting packages
+        run: brew install openssl@3
+
+      - name: asdf_plugin_test
+        uses: asdf-vm/actions/plugin-test@v1
+        with:
+          command: php --version
+          version: ${{ matrix.php-version }}
+
+  format:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Install shfmt
+        run: brew install shfmt
+
+      - name: Run shfmt
+        run: make fmt-check

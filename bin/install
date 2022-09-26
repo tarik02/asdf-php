@@ -1,0 +1,52 @@
+#!/usr/bin/env bash
+
+set -eu -o pipefail
+
+# shellcheck source=lib/utils.sh
+source "$(dirname "$0")/../lib/utils.sh"
+
+: "${ASDF_PHP_PHPBUILD_HOME=$ASDF_PHP_PLUGIN_DIR/.php-build}"
+
+install_php() {
+  local install_type="$1" version="$2" install_path="$3"
+
+  PHP_BUILD_CONFIGURE_OPTS="$PHP_BUILD_CONFIGURE_OPTS" CXXFLAGS="${CXXFLAGS:-}" phpbuild_wrapped "$version" "$install_path"
+}
+
+install_composer() {
+  local bin_path=$1/bin
+  local expected_signature="$(curl -sL https://composer.github.io/installer.sig)"
+
+  "$bin_path/php" -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
+  "$bin_path/php" -r "if (hash_file('sha384', 'composer-setup.php') === '${expected_signature}') { echo 'Installer verified'; } else { echo 'Installer corrupt'; unlink('composer-setup.php'); } echo PHP_EOL;"
+  "$bin_path/php" composer-setup.php "--install-dir=$bin_path" --filename=composer
+  "$bin_path/php" -r "unlink('composer-setup.php');"
+}
+
+if [ "$PHP_BUILD_CONFIGURE_OPTS" = "" ]; then
+  PHP_BUILD_CONFIGURE_OPTS=""
+fi
+
+case "$ASDF_INSTALL_VERSION" in
+  5.*)
+    icu4c_dir="$ASDF_PHP_CACHE_DIR/icu4c-60-3"
+    install_icu4c "https://github.com/unicode-org/icu/releases/download/release-60-3/icu4c-60_3-src.tgz" "$icu4c_dir"
+    PHP_BUILD_CONFIGURE_OPTS="${PHP_BUILD_CONFIGURE_OPTS} --with-icu-dir=$icu4c_dir"
+    ;;
+
+  7.0.* | 7.1.* | 7.2.* | 7.3.*)
+    icu4c_dir="$ASDF_PHP_CACHE_DIR/icu4c-63-1"
+    install_icu4c "https://github.com/unicode-org/icu/releases/download/release-63-1/icu4c-63_1-src.tgz" "$icu4c_dir"
+    PHP_BUILD_CONFIGURE_OPTS="${PHP_BUILD_CONFIGURE_OPTS} --with-icu-dir=$icu4c_dir"
+    CXXFLAGS="-DU_USING_ICU_NAMESPACE=1" # icu>61
+    ;;
+
+  7.4.* | 8.*)
+    icu4c_dir="$ASDF_PHP_CACHE_DIR/icu4c-71-1"
+    install_icu4c "https://github.com/unicode-org/icu/releases/download/release-71-1/icu4c-71_1-src.tgz" "$icu4c_dir"
+    PHP_BUILD_CONFIGURE_OPTS="${PHP_BUILD_CONFIGURE_OPTS} --with-icu-dir=$icu4c_dir"
+    ;;
+esac
+
+install_php "$ASDF_INSTALL_TYPE" "$ASDF_INSTALL_VERSION" "$ASDF_INSTALL_PATH"
+install_composer "$ASDF_INSTALL_PATH"
