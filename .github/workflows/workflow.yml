@@ -34,6 +34,9 @@ jobs:
       - name: Install packages
         run: apt-get update && apt-get install -y autoconf bison build-essential curl gettext git libgd-dev libcurl4-openssl-dev libedit-dev libicu-dev libjpeg-dev libmysqlclient-dev libonig-dev libpng-dev libpq-dev libreadline-dev libsqlite3-dev libssl-dev libxml2-dev libzip-dev openssl pkg-config re2c zlib1g-dev libbz2-dev
 
+      - name: Fix curl for php
+        run: ln -s /usr/include/x86_64-linux-gnu/curl /usr/include/curl
+
       - name: asdf_plugin_test
         uses: asdf-vm/actions/plugin-test@v1
         with:
