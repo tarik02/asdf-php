@@ -39,14 +39,14 @@ phpbuild_wrapped() {
 try_to_update_php_build() {
   local exit_code=0
 
-  "$ASDF_NODEJS_PLUGIN_DIR/lib/commands/command-update-php-build.bash" 2> /dev/null || exit_code=$?
+  "$ASDF_PHP_PLUGIN_DIR/lib/commands/command-update-php-build.bash" 2> /dev/null || exit_code=$?
 
   if [ "$exit_code" != 0 ]; then
     printf "
 $(colored $YELLOW WARNING): Updating node-build failed with exit code %s. The installation will
 try to continue with already installed local defintions. To debug what went
 wrong, try to manually update node-build by running: \`asdf %s update php-build\`
-\n" "$exit_code" "$ASDF_NODEJS_PLUGIN_NAME"
+\n" "$exit_code" "$ASDF_PHP_PLUGIN_NAME"
   fi
 }
 
