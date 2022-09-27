@@ -39,6 +39,8 @@ jobs:
 
       - name: asdf_plugin_test
         uses: asdf-vm/actions/plugin-test@v1
+        env:
+          VERBOSE: 1
         with:
           command: php --version
           version: ${{ matrix.php-version }}
@@ -69,6 +71,8 @@ jobs:
 
       - name: asdf_plugin_test
         uses: asdf-vm/actions/plugin-test@v1
+        env:
+          VERBOSE: 1
         with:
           command: php --version
           version: ${{ matrix.php-version }}
